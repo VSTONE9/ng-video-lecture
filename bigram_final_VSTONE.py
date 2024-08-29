@@ -2,34 +2,22 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-"""
-This code is inspired by Andrej Karpathy's video series:
-"Let's build GPT: from scratch, in code, spelled out."
-It was developed as Homework 0 for CS 2281R.
-
-In this version, I experimented with different hyperparameters to see how they 
-impact model performance, with a focus on achieving similar results using less 
-computational power. I also tested three different optimizers: AdamW, RAdam, 
-and RMSprop. Interestingly, there wasn't much difference in performance, 
-as measured by training and validation loss.
-"""
-
 
 # hyperparameters
-batch_size = 16 # how many independent sequences will we process in parallel?
-block_size = 32 # what is the maximum context length for predictions?
-max_iters = 6001
-eval_interval = 100
-learning_rate = 1e-3
+batch_size = 64 # how many independent sequences will we process in parallel?
+block_size = 256 # what is the maximum context length for predictions?
+max_iters = 5000
+eval_interval = 500
+learning_rate = 3e-4
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 eval_iters = 200
-n_embd = 64
-n_head = 4
-n_layer = 4
+n_embd = 384
+n_head = 6
+n_layer = 6
 dropout = 0.2
 # ------------
 
-torch.manual_seed(2281)
+torch.manual_seed(1337)
 
 # wget https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt
 with open('input.txt', 'r', encoding='utf-8') as f:
@@ -201,12 +189,7 @@ model = BigramLanguageModel(vocab_size)
 m = model.to(device)
 
 # create a PyTorch optimizer
-#optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-#optimizer = torch.optim.RAdam(model.parameters(), lr=learning_rate)
-optimizer = torch.optim.RMSprop(model.parameters(), lr=learning_rate)
-#print("optimizer: AdamW")
-#print("optimizer: RAdam")
-print("optimizer: RMSprop")
+optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
 for iter in range(max_iters):
 
